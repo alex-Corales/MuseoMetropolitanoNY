@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "express": "4.21.0",
+    "node-fetch": "^2.7.0",
+    "node-google-translate-skidz": "^1.1.2"
+  },
+  "name": "museometropolitanony",
+  "version": "1.0.0",
+  "description": "Práctico Integrador Web II",
+  "main": "server.js",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}

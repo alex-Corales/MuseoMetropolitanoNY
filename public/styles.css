@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.filtros {
+    display: flex;
+    justify-content: center; 
+    gap: 10px; 
+    margin-bottom: 20px;
+}
+
+.filtros label {
+    font-size: 0.9em;
+    margin-right: 5px;
+}
+
+.filtros select, .filtros input, .filtros button {
+    padding: 5px;
+    font-size: 0.9em;
+}
+
+.filtros button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.filtros button:hover {
+    background-color: #0056b3;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    max-height: 150px;
+}
+
+.paginacion {
+    text-align: center;
+    margin-top: 20px;
+}
