@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Mostrar los resultados en la cuadrícula
+    // Mostrar los resultados
     function mostrarArte(objetos) {
         cuadrículaArte.innerHTML = '';
         objetos.forEach(obj => {
