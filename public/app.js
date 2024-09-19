@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const botonBuscar = document.getElementById('botonBuscar');
     const cuadrículaArte = document.getElementById('cuadriculaArte');
     const paginacion = document.getElementById('paginacion');
+    const feedbackCarga = document.getElementById('feedbackCarga');
     let paginaActual = 1;
     const elementosPorPagina = 20;
 
@@ -37,12 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const palabraClave = entradaPalabraClave.value;
         const ubicacion = seleccionUbicacion.value;
 
+        
+        feedbackCarga.style.display = 'block';
+
         fetch(`/api/search?department=${departamento}&keyword=${palabraClave}&location=${ubicacion}&page=${pagina}`)
             .then(res => res.json())
             .then(data => {
                 mostrarArte(data.objects);
                 configurarPaginacion(data.totalPages, pagina);
-                console.log(data);
+                feedbackCarga.style.display = 'none'; 
+            })
+            .catch(error => {
+                feedbackCarga.style.display = 'none'; 
+                console.error("Error en la búsqueda:", error);
             });
     }
 
@@ -52,32 +60,48 @@ document.addEventListener("DOMContentLoaded", () => {
         objetos.forEach(obj => {
             const tarjeta = document.createElement('div');
             tarjeta.classList.add('card');
-            
+
             // Verificar si la dinastía está disponible
             const textoDinastia = obj.dynasty ? obj.dynasty : 'Dinastía no disponible';
-    
+
             tarjeta.innerHTML = `
                 <img src="${obj.primaryImage}" alt="${obj.title}" title="Fecha aproximada: ${obj.objectDate}">
                 <h3>${obj.title}</h3>
                 <p>Cultura: ${obj.culture}</p>
                 <p>Dinastía: ${textoDinastia}</p>
-            `;
+                ${obj.additionalImages && obj.additionalImages.length > 0 ? `<a href="view-images.html?objectID=${obj.objectID}" class="ver-imagenes">Ver imágenes adicionales</a>` : ''}
+                `;
             cuadrículaArte.appendChild(tarjeta);
         });
     }
-    
+
 
     // Configurar paginación
     function configurarPaginacion(paginasTotales, paginaActual) {
         paginacion.innerHTML = '';
-        for (let i = 1; i <= paginasTotales; i++) {
+        const crearBotonPagina = (pagina, texto) => {
             const botonPagina = document.createElement('button');
-            botonPagina.textContent = i;
-            if (i === paginaActual) {
+            botonPagina.textContent = texto;
+            if (pagina === paginaActual) {
                 botonPagina.disabled = true;
+                botonPagina.classList.add('disabled');
+            } else {
+                botonPagina.addEventListener('click', () => buscarArte(pagina));
             }
-            botonPagina.addEventListener('click', () => buscarArte(i));
-            paginacion.appendChild(botonPagina);
+            return botonPagina;
+        };
+
+        // Botones de primera y última página
+        if (paginaActual > 1) {
+            paginacion.appendChild(crearBotonPagina(1, 'Primera'));
+            paginacion.appendChild(crearBotonPagina(paginaActual - 1, 'Anterior'));
+        }
+        for (let i = Math.max(1, paginaActual - 2); i <= Math.min(paginasTotales, paginaActual + 2); i++) {
+            paginacion.appendChild(crearBotonPagina(i, i));
+        }
+        if (paginaActual < paginasTotales) {
+            paginacion.appendChild(crearBotonPagina(paginaActual + 1, 'Siguiente'));
+            paginacion.appendChild(crearBotonPagina(paginasTotales, 'Última'));
         }
     }
 

@@ -38,7 +38,8 @@ h1 {
     margin-right: 8px;
 }
 
-.filtros select, .filtros input {
+.filtros select,
+.filtros input {
     padding: 8px;
     font-size: 1em;
     border-radius: 4px;
@@ -62,7 +63,8 @@ h1 {
 /* Galería de Arte */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adaptable para pantallas más pequeñas */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Adaptable para pantallas más pequeñas */
     gap: 15px;
 }
 
@@ -108,3 +110,68 @@ h1 {
 .paginacion-container button:hover {
     background-color: #0056b3;
 }
+
+/* Feedback de Carga */
+
+.feedback-carga {
+    display: none;
+    /* Oculto por defecto */
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2em;
+    color: #007bff;
+}
+
+.additional-image {
+    width: 100%;
+    max-width: 400px; /* Ajusta el tamaño máximo según sea necesario */
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos específicos para la vista de imágenes adicionales */
+.images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    justify-content: center;
+    margin: 20px;
+}
+
+.images-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover; /* Ajusta la imagen para que cubra el contenedor sin distorsionar */
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.back-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1em;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
