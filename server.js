@@ -7,6 +7,10 @@ const PUERTO = 3000;
 
 app.use(express.static('public'));
 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
 // Endpoint para obtener departamentos
 app.get('/api/departments', async (req, res) => {
     try {
