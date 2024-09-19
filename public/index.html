@@ -4,28 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galería de Arte del MET</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Galería de Arte del Museo Metropolitano de Nueva York</h1>
+    <header>
+        <h1>Galería de Arte del Museo Metropolitano de Nueva York</h1>
+    </header>
 
-    <div class="filtros">
-        <label for="departamento">Departamento:</label>
-        <select id="departamento"></select>
-    
-        <label for="palabraClave">Palabra clave:</label>
-        <input type="text" id="palabraClave" placeholder="Buscar por palabra clave...">
-    
-        <label for="ubicacion">Localización:</label>
-        <select id="ubicacion"></select>
-    
-        <button id="botonBuscar">Buscar</button>
-    </div>
-    
+    <section class="filtros-container">
+        <div class="filtros">
+            <div class="filtro-item">
+                <label for="departamento">Departamento:</label>
+                <select id="departamento"></select>
+            </div>
 
-    <div id="cuadriculaArte" class="grid"></div>
+            <div class="filtro-item">
+                <label for="palabraClave">Palabra clave:</label>
+                <input type="text" id="palabraClave" placeholder="Buscar por palabra clave...">
+            </div>
 
-    <div id="paginacion"></div>
+            <div class="filtro-item">
+                <label for="ubicacion">Localización:</label>
+                <select id="ubicacion"></select>
+            </div>
+            
+            <button id="botonBuscar">Buscar</button>
+        </div>
+    </section>
+
+    <section id="cuadriculaArte" class="grid-container"></section>
+
+    <section id="paginacion" class="paginacion-container"></section>
 
     <script src="/app.js"></script>
 </body>
