@@ -43,15 +43,15 @@ app.get('/api/search', async (req, res) => {
         respuestaBusqueda = await fetch(urlBusqueda);
         datosBusqueda = await respuestaBusqueda.json();
     } else if (keyword) {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=${keyword}`
+        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=${keyword}`;
         respuestaBusqueda = await fetch(urlBusqueda);
         datosBusqueda = await respuestaBusqueda.json();
     } else if (location !== '--') {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''&geoLocation=${location}`
+        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''&geoLocation=${location}`;
         respuestaBusqueda = await fetch(urlBusqueda);
         datosBusqueda = await respuestaBusqueda.json();
     } else {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''`
+        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''`;
         respuestaBusqueda = await fetch(urlBusqueda);
         datosBusqueda = await respuestaBusqueda.json();
     }
@@ -66,7 +66,7 @@ app.get('/api/search', async (req, res) => {
             idsPaginados.map(async id => {
                 const respuestaObjeto = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
                 const datosObjeto = await respuestaObjeto.json();
-                console.log(datosObjeto);
+                //console.log(datosObjeto);
 
                 // Traducción al español
                 const tituloTraducido = await traducirTexto(datosObjeto.title);
@@ -78,16 +78,26 @@ app.get('/api/search', async (req, res) => {
                     title: tituloTraducido,
                     culture: culturaTraducida,
                     dynasty: dinastiaTraducida,
-                    //https://www.italfren.com.ar/images/catalogo/imagen-no-disponible.jpeg
                     primaryImage: datosObjeto.primaryImage || 'imagen-no-disponible.jpeg',
                     additionalImages: datosObjeto.additionalImages || [],
                     objectDate: datosObjeto.objectDate
                 };
-
             })
         );
 
-        res.json({ objects: objetos, totalPages: paginasTotales });
+        // Filtrar duplicados por título antes de la paginación
+        const objetosFiltrados = objetos.reduce((acumulador, objeto) => {
+            if (!acumulador.some(item => item.title === objeto.title)) {
+                acumulador.push(objeto);
+            }
+            return acumulador;
+        }, []);
+
+        // Volver a calcular la paginación basándose en los objetos filtrados
+        const paginasFiltradasTotales = Math.ceil(objetosFiltrados.length / elementosPorPagina);
+        const objetosPaginados = objetosFiltrados.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);
+
+        res.json({ objects: objetosPaginados, totalPages: paginasFiltradasTotales });
     } catch (error) {
         console.error("Error en la búsqueda:", error);
         res.status(500).json({ error: 'Error al buscar los objetos' });

@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const palabraClave = entradaPalabraClave.value;
         const ubicacion = seleccionUbicacion.value;
 
-        
+
         feedbackCarga.style.display = 'block';
 
         fetch(`/api/search?department=${departamento}&keyword=${palabraClave}&location=${ubicacion}&page=${pagina}`)
@@ -46,16 +46,23 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 mostrarArte(data.objects);
                 configurarPaginacion(data.totalPages, pagina);
-                feedbackCarga.style.display = 'none'; 
+                feedbackCarga.style.display = 'none';
             })
             .catch(error => {
-                feedbackCarga.style.display = 'none'; 
+                feedbackCarga.style.display = 'none';
                 console.error("Error en la búsqueda:", error);
             });
     }
 
     // Mostrar los resultados
     function mostrarArte(objetos) {
+        if (objetos.length === 0) {
+            console.log("No se encontraron resultados");
+            cuadrículaArte.innerHTML = '<p>No se encontraron resultados.</p>';
+            return;
+        }
+        console.log(objetos);
+
         cuadrículaArte.innerHTML = '';
         objetos.forEach(obj => {
             const tarjeta = document.createElement('div');
@@ -74,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
             cuadrículaArte.appendChild(tarjeta);
         });
     }
-
 
     // Configurar paginación
     function configurarPaginacion(paginasTotales, paginaActual) {
