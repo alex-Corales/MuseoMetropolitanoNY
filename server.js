@@ -26,38 +26,36 @@ app.get('/api/departments', async (req, res) => {
 });
 
 
+// Función para construir la URL de búsqueda
+function construirUrlBusqueda(department, keyword = '', location = '--') {
+    let baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
+    let queryParams = `?departmentId=${department}&hasImages=true`;
+
+    if (keyword) {
+        queryParams += `&q=${keyword}`;
+    } else {
+        queryParams += `&q=""`;
+    }
+
+    if (location !== '--') {
+        queryParams += `&geoLocation=${location}`;
+    }
+
+    return baseUrl + queryParams;
+}
+
 // Endpoint para buscar objetos
 app.get('/api/search', async (req, res) => {
     const { department, keyword, location, page = 1 } = req.query;
     const elementosPorPagina = 20;
-    let urlBusqueda = '';
-    let respuestaBusqueda;
-    let datosBusqueda;
 
-    if (department && !keyword && location === '--') { // Solo busco por departamento
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=${department}`;
-        respuestaBusqueda = await fetch(urlBusqueda);
-        datosBusqueda = await respuestaBusqueda.json();
-    } else if (keyword && location !== '--') { // Busco por departamento, palabra clave y localización
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=${keyword}&geoLocation=${location}`;
-        respuestaBusqueda = await fetch(urlBusqueda);
-        datosBusqueda = await respuestaBusqueda.json();
-    } else if (keyword) {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=${keyword}`;
-        respuestaBusqueda = await fetch(urlBusqueda);
-        datosBusqueda = await respuestaBusqueda.json();
-    } else if (location !== '--') {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''&geoLocation=${location}`;
-        respuestaBusqueda = await fetch(urlBusqueda);
-        datosBusqueda = await respuestaBusqueda.json();
-    } else {
-        urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?departmentId=${department}&hasImages=true&q=''`;
-        respuestaBusqueda = await fetch(urlBusqueda);
-        datosBusqueda = await respuestaBusqueda.json();
-    }
-
+    const urlBusqueda = construirUrlBusqueda(department, keyword, location);
     console.log(urlBusqueda);
+
     try {
+        const respuestaBusqueda = await fetch(urlBusqueda);
+        const datosBusqueda = await respuestaBusqueda.json();
+        
         const idsObjetos = datosBusqueda.objectIDs || [];
         const paginasTotales = Math.ceil(idsObjetos.length / elementosPorPagina);
         const idsPaginados = idsObjetos.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);
@@ -66,7 +64,6 @@ app.get('/api/search', async (req, res) => {
             idsPaginados.map(async id => {
                 const respuestaObjeto = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
                 const datosObjeto = await respuestaObjeto.json();
-                //console.log(datosObjeto);
 
                 // Traducción al español
                 const tituloTraducido = await traducirTexto(datosObjeto.title);
@@ -85,24 +82,27 @@ app.get('/api/search', async (req, res) => {
             })
         );
 
+        //objetos.forEach(objeto => console.log(objeto.title));
+
         // Filtrar duplicados por título antes de la paginación
-        const objetosFiltrados = objetos.reduce((acumulador, objeto) => {
+        /*const objetosFiltrados = objetos.reduce((acumulador, objeto) => {
             if (!acumulador.some(item => item.title === objeto.title)) {
                 acumulador.push(objeto);
             }
             return acumulador;
         }, []);
-
+    
         // Volver a calcular la paginación basándose en los objetos filtrados
         const paginasFiltradasTotales = Math.ceil(objetosFiltrados.length / elementosPorPagina);
-        const objetosPaginados = objetosFiltrados.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);
-
-        res.json({ objects: objetosPaginados, totalPages: paginasFiltradasTotales });
+        const objetosPaginados = objetosFiltrados.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);*/
+    
+        res.json({ objects: objetos, totalPages: paginasTotales });
     } catch (error) {
         console.error("Error en la búsqueda:", error);
         res.status(500).json({ error: 'Error al buscar los objetos' });
     }
 });
+
 
 
 // Función de traducción usando el paquete node-google-translate-skidz
