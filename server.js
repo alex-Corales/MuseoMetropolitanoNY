@@ -90,11 +90,7 @@ app.get('/api/search', async (req, res) => {
                 acumulador.push(objeto);
             }
             return acumulador;
-        }, []);
-    
-        // Volver a calcular la paginación basándose en los objetos filtrados
-        const paginasFiltradasTotales = Math.ceil(objetosFiltrados.length / elementosPorPagina);
-        const objetosPaginados = objetosFiltrados.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);*/
+        }, []);*/
     
         res.json({ objects: objetos, totalPages: paginasTotales });
     } catch (error) {
