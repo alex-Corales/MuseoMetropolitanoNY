@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const feedbackCarga = document.getElementById('feedbackCarga');
     let paginaActual = 1;
     const elementosPorPagina = 20;
-
+    
     const ubicaciones = ['--', 'Europe', 'China', 'Paris', 'New York', 'Japan', 'Egypt'];
 
     fetch('/api/departments')

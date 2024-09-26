@@ -33,6 +33,7 @@ app.get('/api/departments', async (req, res) => {
     }
 });
 
+
 function construirUrlBusqueda(department, keyword = '', location = '--') {
     let baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
     let queryParams = `?departmentId=${department}&hasImages=true`;
