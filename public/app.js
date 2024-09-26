@@ -9,10 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let paginaActual = 1;
     const elementosPorPagina = 20;
 
-    // Ubicaciones predefinidas
     const ubicaciones = ['--', 'Europe', 'China', 'Paris', 'New York', 'Japan', 'Egypt'];
 
-    // Cargar departamentos en la lista desplegable
     fetch('/api/departments')
         .then(res => res.json())
         .then(data => {
@@ -22,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 opcion.textContent = departamento.displayName;
                 seleccionDepartamento.appendChild(opcion);
             });
+        })
+        .catch((error) => {
+            console.error('Error al cargar los departamentos:', error);
         });
 
-    // Cargar ubicaciones predefinidas en la lista desplegable
     ubicaciones.forEach(ubicacion => {
         const opcion = document.createElement('option');
         opcion.value = ubicacion;
@@ -32,12 +32,30 @@ document.addEventListener("DOMContentLoaded", () => {
         seleccionUbicacion.appendChild(opcion);
     });
 
-    // Función de búsqueda
+    function verificarSeleccion() {
+        const departamento = seleccionDepartamento.value;
+        const palabraClave = entradaPalabraClave.value.trim();
+        const ubicacion = seleccionUbicacion.value;
+    
+        if ((departamento === '--' || departamento === "") && palabraClave === "" && (ubicacion === '--' || ubicacion === "")) {
+            Swal.fire({
+                icon: 'warning',
+                //title: '',
+                text: 'Por favor, selecciona al menos un campo o ingresa una palabra clave para realizar la búsqueda.',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#3085d6'
+            });
+            return false;
+        }
+        return true; 
+    }    
+
     function buscarArte(pagina = 1) {
+        if (!verificarSeleccion()) return;
+        
         const departamento = seleccionDepartamento.value;
         const palabraClave = entradaPalabraClave.value;
         const ubicacion = seleccionUbicacion.value;
-
 
         feedbackCarga.style.display = 'block';
 
@@ -54,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Mostrar los resultados
     function mostrarArte(objetos) {
         if (objetos.length === 0) {
             console.log("No se encontraron resultados");
@@ -76,15 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h3>${obj.title}</h3>
                 <p>Cultura: ${obj.culture}</p>
                 <p>Dinastía: ${textoDinastia}</p>
-                ${obj.additionalImages && obj.additionalImages.length > 0 ? `<a href="view-images.html?objectID=${obj.objectID}" class="ver-imagenes">Ver imágenes adicionales</a>` : ''}
+            ${obj.additionalImages && obj.additionalImages.length > 0 ? `<a href="view-images.html?objectID=${obj.objectID}&title=${encodeURIComponent(obj.title)}" class="ver-imagenes">Ver imágenes adicionales</a>` : ''}
                 `;
             cuadrículaArte.appendChild(tarjeta);
         });
     }
 
-    // Configurar paginación
     function configurarPaginacion(paginasTotales, paginaActual) {
         paginacion.innerHTML = '';
+
         const crearBotonPagina = (pagina, texto) => {
             const botonPagina = document.createElement('button');
             botonPagina.textContent = texto;
@@ -97,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return botonPagina;
         };
 
-        // Botones de primera y última página
         if (paginaActual > 1) {
             paginacion.appendChild(crearBotonPagina(1, 'Primera'));
             paginacion.appendChild(crearBotonPagina(paginaActual - 1, 'Anterior'));
@@ -111,6 +127,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Manejar evento de búsqueda
     botonBuscar.addEventListener('click', () => buscarArte(paginaActual));
 });

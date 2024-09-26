@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const h1Title = document.getElementById('title');
     const urlParams = new URLSearchParams(window.location.search);
     const objectID = urlParams.get('objectID');
+    const title = urlParams.get('title');
 
     if (!objectID) {
         container.innerHTML = 'ID de objeto no proporcionado.';
@@ -20,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.innerHTML = 'No hay imágenes adicionales disponibles.';
                 return;
             }
-            h1Title.innerHTML = `Imagenes adicionales`;
+
+            h1Title.innerHTML = `Imágenes adicionales de ${title}`;
             imagenesAdicionales.forEach(imgUrl => {
                 const img = document.createElement('img');
                 img.src = imgUrl;

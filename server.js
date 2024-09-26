@@ -19,17 +19,27 @@ app.get('/api/departments', async (req, res) => {
     try {
         const respuesta = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/departments');
         const datos = await respuesta.json();
-        res.json(datos);
+
+        const resultadoModificado = {
+            departments: [
+                { departmentId: "", displayName: "--" },  
+                ...datos.departments 
+            ]
+        };
+
+        res.json(resultadoModificado);
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener los departamentos' });
     }
 });
 
-
-// Función para construir la URL de búsqueda
 function construirUrlBusqueda(department, keyword = '', location = '--') {
     let baseUrl = 'https://collectionapi.metmuseum.org/public/collection/v1/search';
     let queryParams = `?departmentId=${department}&hasImages=true`;
+
+    if(department === "--") {
+        queryParams = `?hasImages=true`;
+    }
 
     if (keyword) {
         queryParams += `&q=${keyword}`;
@@ -55,7 +65,8 @@ app.get('/api/search', async (req, res) => {
     try {
         const respuestaBusqueda = await fetch(urlBusqueda);
         const datosBusqueda = await respuestaBusqueda.json();
-        
+        console.log(datosBusqueda);
+
         const idsObjetos = datosBusqueda.objectIDs || [];
         const paginasTotales = Math.ceil(idsObjetos.length / elementosPorPagina);
         const idsPaginados = idsObjetos.slice((page - 1) * elementosPorPagina, page * elementosPorPagina);
@@ -91,7 +102,7 @@ app.get('/api/search', async (req, res) => {
             }
             return acumulador;
         }, []);*/
-    
+
         res.json({ objects: objetos, totalPages: paginasTotales });
     } catch (error) {
         console.error("Error en la búsqueda:", error);
@@ -118,3 +129,4 @@ async function traducirTexto(texto) {
 app.listen(PUERTO, () => {
     console.log(`Servidor corriendo en http://localhost:${PUERTO}`);
 });
+
